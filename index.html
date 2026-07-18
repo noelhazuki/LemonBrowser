@@ -573,7 +573,7 @@
       const card = document.createElement("a");
       card.className = "card";
       card.href = s.galaxy ? toIntentUrl(s.url) : s.url;
-      card.target = "_blank";
+      if (!s.galaxy) card.target = "_blank";
       card.rel = "noreferrer";
       card.addEventListener("click", (e) => { if (reorderMode) e.preventDefault(); });
 
