@@ -1,7 +1,9 @@
 {
   "name": "lemonbrowser",
   "compatibility_date": "2026-07-18",
+  "main": "worker.js",
   "assets": {
-    "directory": "./"
+    "directory": "./",
+    "binding": "ASSETS"
   }
 }
