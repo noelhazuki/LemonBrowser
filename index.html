@@ -304,7 +304,22 @@
     categories = raw ? JSON.parse(raw) : defaultData();
   } catch (e) { categories = defaultData(); }
 
+  // ▼ 最後に開いてたタブの復元
+  const ACTIVE_KEY = "tabfolder_activeId_v1";
+
   let activeId = categories[0] ? categories[0].id : null;
+  try {
+    const savedActiveId = localStorage.getItem(ACTIVE_KEY);
+    if (savedActiveId && categories.some(c => c.id === savedActiveId)) {
+      activeId = savedActiveId;
+    }
+  } catch (e) {}
+
+  function saveActiveId() {
+    try { localStorage.setItem(ACTIVE_KEY, activeId || ""); } catch (e) {}
+  }
+  // ▲ 最後に開いてたタブの復元
+
   let query = "";
   let reorderMode = false;
   let editingCatId = null;
@@ -384,7 +399,7 @@
       const isActive = c.id === activeId;
       const tab = document.createElement("div");
       tab.className = "tab" + (isActive ? " active" : "");
-      tab.onclick = () => { activeId = c.id; query = ""; document.getElementById("searchInput").value = ""; render(); };
+      tab.onclick = () => { activeId = c.id; saveActiveId(); query = ""; document.getElementById("searchInput").value = ""; render(); };
       tab.ondblclick = (e) => { e.stopPropagation(); editingCatId = c.id; render(); };
 
       if (editingCatId === c.id) {
@@ -463,6 +478,7 @@
     const id = "cat_" + Date.now();
     categories.push({ id, name, color, sites: [] });
     activeId = id;
+    saveActiveId();
     save();
     render();
   }
@@ -470,6 +486,7 @@
   function removeCategory(id) {
     categories = categories.filter(c => c.id !== id);
     if (activeId === id) activeId = categories[0]?.id || null;
+    saveActiveId();
     save();
     render();
   }
